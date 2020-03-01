@@ -12,7 +12,7 @@ All modern browsers are supported. Older browsers such as Internet Explorer will
 Ensure Docker is installed then clone the repository in your terminal:
 
 ```sh
-git clone https://github.com/craigbuckler/codeoperate.git
+git clone https://github.com/sitepoint-editors/codeoperate.git
 ```
 
 Navigate to the `codeoperate` directory and start (this can take several minutes on the first launch):
