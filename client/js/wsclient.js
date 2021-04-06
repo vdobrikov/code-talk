@@ -9,7 +9,7 @@ let socket = null;
 function init(type, data) {
 
   if (socket) return false;
-  socket = new WebSocket(cfg.wsURL);
+  socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
 
   // client start
   socket.addEventListener('open', () => send(type, data));

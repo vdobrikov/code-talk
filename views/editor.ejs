@@ -66,7 +66,8 @@
 <!-- main script -->
 <script type="module">
 window.cfg = {
-  wsURL   : 'ws://<%- cfg.hostname %>:<%- cfg.portWS %>',
+  // wsURL   : 'ws://<%- cfg.hostname %>:<%- cfg.portWS %>/<%- cfg.pathWS %>',
+  wsURL   : 'ws://<%- cfg.hostname %>:80/<%- cfg.pathWS %>',
   editId  : '<%- edit._id %>',
   mode    : '<%- edit.mode %>',
   saveWait: '<%- cfg.saveWait %>'

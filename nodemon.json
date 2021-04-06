@@ -5,7 +5,8 @@
     ".git/",
     "*.md",
     "client/",
-    "node_modules/"
+    "node_modules/",
+    "proxy/"
   ],
   "legacyWatch": true,
   "delay": 200,

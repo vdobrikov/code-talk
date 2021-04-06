@@ -7,7 +7,6 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=root
       - MONGO_INITDB_ROOT_PASSWORD=mysecret
     image: mongo:4-bionic
-    container_name: coopdb
     volumes:
       - coopdata:/data/db
     ports:
@@ -23,17 +22,31 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: coopapp
     depends_on:
       - coopdb
     command: /bin/sh -c 'npm i && npm run debug'
     volumes:
       - ./:/home/node/app
-    ports:
-      - "3000:3000"
-      - "3001:3001"
+    # ports:
+    #   - "3000:3000"
+    #   - "3001:3001"
     networks:
-      - coopnet
+      coopnet:
+        aliases: 
+          - coopapp-name
+
+  coopproxy:
+    image: nginx:alpine
+    depends_on:
+      - coopapp
+    ports:
+      - "80:80"
+    volumes:
+      - "./proxy/default.conf:/etc/nginx/conf.d/default.conf:ro"
+    networks: 
+      coopnet:
+        aliases:
+          - coopproxy-name        
 
 volumes:
   coopdata:
