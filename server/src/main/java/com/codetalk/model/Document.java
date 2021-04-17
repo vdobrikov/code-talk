@@ -10,7 +10,7 @@ public class Document {
     private String id;
     private String title;
     private String syntax;
-    private String code;
+    private String code = "";
     private Date created;
     private Date updated;
 

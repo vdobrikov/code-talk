@@ -1,4 +1,4 @@
-package com.codetalk;
+package com.codetalk.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -11,8 +11,10 @@ public class WebSecurityConfiguration {
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http.authorizeExchange()
+                .pathMatchers("/static/js/**")
+                    .permitAll()
                 .pathMatchers("/admin/**")
-                .hasRole("ADMIN")
+                    .hasRole("ADMIN")
                 .pathMatchers("/**").permitAll()
                 .and().httpBasic();
         http.csrf().disable();

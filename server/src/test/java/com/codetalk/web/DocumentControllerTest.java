@@ -1,6 +1,6 @@
 package com.codetalk.web;
 
-import com.codetalk.WebSecurityConfiguration;
+import com.codetalk.config.WebSecurityConfiguration;
 import com.codetalk.model.Document;
 import com.codetalk.repository.DocumentRepository;
 import com.codetalk.service.DocumentService;
