@@ -30,7 +30,7 @@ function init(type, data) {
 // send WebSocket message
 export function send(type = '', data = '') {
     if (!socket) init(type, data);
-    else socket.send(`${ type }:${ JSON.stringify(data) }`);
+    else socket.send(JSON.stringify({type: type, data: data}));
 }
 
 
