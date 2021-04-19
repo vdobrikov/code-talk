@@ -33,6 +33,10 @@ public class DocumentService {
                 .flatMap(documentRepository::save);
     }
 
+    public Mono<Document> update(Document document) {
+        return documentRepository.save(document);
+    }
+
     public Mono<Document> delete(String id) {
         return documentRepository.findById(id)
                 .map(existing -> {

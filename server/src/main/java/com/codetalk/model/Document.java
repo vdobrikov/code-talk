@@ -1,8 +1,10 @@
 package com.codetalk.model;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import java.util.Date;
+import java.time.Instant;
 
 @org.springframework.data.mongodb.core.mapping.Document
 public class Document {
@@ -10,9 +12,11 @@ public class Document {
     private String id;
     private String title;
     private String syntax;
-    private String code = "";
-    private Date created;
-    private Date updated;
+    private String content = "";
+    @CreatedDate
+    private Instant createdDate;
+    @LastModifiedDate
+    private Instant updatedDate;
 
     public Document() {
     }
@@ -22,16 +26,16 @@ public class Document {
         this.syntax = syntax;
     }
 
-    public Document(String title, String syntax, String code) {
+    public Document(String title, String syntax, String content) {
         this.title = title;
         this.syntax = syntax;
-        this.code = code;
+        this.content = content;
     }
 
     public Document copyFrom(Document another) {
         this.setTitle(another.getTitle());
         this.setSyntax(another.getSyntax());
-        this.setCode(another.getCode());
+        this.setContent(another.getContent());
         return this;
     }
 
@@ -59,27 +63,31 @@ public class Document {
         this.syntax = syntax;
     }
 
-    public String getCode() {
-        return code;
+    public String getContent() {
+        return content;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public Date getCreated() {
-        return created;
+    public Instant getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreated(Date created) {
-        this.created = created;
+    public Instant getUpdatedDate() {
+        return updatedDate;
     }
 
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    @Override
+    public String toString() {
+        return "Document{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", syntax='" + syntax + '\'' +
+                ", content='" + content + '\'' +
+                ", createdDate=" + createdDate +
+                ", updatedDate=" + updatedDate +
+                '}';
     }
 }

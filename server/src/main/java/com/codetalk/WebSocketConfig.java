@@ -1,4 +1,4 @@
-package com.codetalk.config;
+package com.codetalk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;

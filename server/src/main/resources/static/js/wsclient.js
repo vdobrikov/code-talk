@@ -5,7 +5,7 @@ let socket = null;
 // initiate WebSocket connection
 function init(type, data) {
     if (socket) return false;
-    socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
+    socket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws?documentId=" + cfg.documentId);
 
     // client start
     socket.onopen = function () {
@@ -36,14 +36,15 @@ export function send(type = '', data = '') {
 
 // parse incoming WebSocket message and raise custom event
 function receive(msg) {
-    let p = msg.indexOf(':'), type = '', data = '';
-
-    if (p > 0 && p < msg.length) {
-        type = msg.slice(0, p);
-
-        try { data = JSON.parse(msg.slice(p+1)); }
-        catch (e) { console.log(e, msg); }
+    let message;
+    try {
+        message = JSON.parse(msg);
+    } catch (e) {
+        console.log(e, msg);
+        return;
     }
+    let type = message.type;
+    let data = message.data;
 
     if (type && data) {
         // raise custom event

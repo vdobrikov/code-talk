@@ -1,12 +1,5 @@
 'use strict';
 
-    // editor object
-    //const cm = CodeMirror(document.getElementById('editor'), {
-    //     value: document.getElementById('code').textContent,
-    //     mode: cfg.mode,
-    //     tabSize: 2,
-    //     lineNumbers: true
-    // }),
 const cm = CodeMirror(document.getElementById('editor'), {
         value: document.getElementById('code').textContent,
         mode: cfg.defaultMode,
@@ -14,13 +7,12 @@ const cm = CodeMirror(document.getElementById('editor'), {
         lineNumbers: true
     });
 
-    // user list
-const operatorListNode = document.getElementById('operatorlist');
-
+// user list
+const operatorListNode = document.getElementById('userList');
 
 // set theme and name
 setOption('theme', localStorage.getItem('theme') || 'default');
-setOption('operator', localStorage.getItem('operator') || 'operator');
+setOption('userName', localStorage.getItem('userName') || 'somebody');
 
 
 // fetch all content
@@ -51,20 +43,17 @@ cm.on('change', (i, change) => {
 
 // programmatic edit
 export function edit(change) {
-
     cm.replaceRange(
         change.text,
         change.from,
         change.to,
         'gen'
     );
-
 }
 
 
 // change title, mode, theme, or operator
 document.body.addEventListener('change', e => {
-
     let target = e.target, type = target.id, value = target.value.trim();
 
     if (!type || !value) return;
@@ -74,9 +63,7 @@ document.body.addEventListener('change', e => {
 
     // raise event
     raiseEvent(type, value);
-
 });
-
 
 // set an option
 export function setOption(name, value) {
@@ -96,24 +83,19 @@ export function getOption(name) {
 
 
 // define all users
-export function setOperators(idSelf, user) {
-
-    user.forEach((u, idx) => addOperator(idx, u));
+export function setUsers(idSelf, user) {
+    user.forEach((u, idx) => addUser(idx, u));
     operatorListNode.children[idSelf].classList.add('self');
-
 }
 
 
 // add an individual user
-export function addOperator(id, name) {
-
+export function addUser(id, name) {
     while (operatorListNode.children.length <= id) {
         let uItem = document.createElement('li');
         operatorListNode.appendChild(uItem);
     }
-
     operatorListNode.children[id].textContent = name;
-
 }
 
 

@@ -1,6 +1,6 @@
 package com.codetalk.web;
 
-import com.codetalk.config.WebSecurityConfiguration;
+import com.codetalk.WebSecurityConfig;
 import com.codetalk.model.Document;
 import com.codetalk.repository.DocumentRepository;
 import com.codetalk.service.DocumentService;
@@ -24,7 +24,7 @@ import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 @ExtendWith(SpringExtension.class)
 @WebFluxTest(controllers = DocumentController.class)
-@Import(WebSecurityConfiguration.class)
+@Import(WebSecurityConfig.class)
 public class DocumentControllerTest {
     private static final String ID = "some-id";
     private static final String TITLE = "some-title";

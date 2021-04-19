@@ -13,6 +13,10 @@
     <!-- Bootstrap core CSS -->
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/webjars/codemirror/lib/codemirror.css" rel="stylesheet">
+
+    <style type="text/css">
+        .CodeMirror { height: 100%; }
+    </style>
 </head>
 
 <body>
@@ -38,12 +42,12 @@
     <div class="row">
         <div class="col-10">
             <div id="editor">
-                <pre id="code" class="d-none" th:text="${document.code}">//Placeholder</pre>
+                <pre id="code" class="d-none" th:text="${document.content}">//Placeholder</pre>
             </div>
         </div>
         <div class="col-2">
-            <input type="text" id="operator" value="operator" title="you - edit your name" minlength="1" maxlength="15" required />
-            <ol id="operatorlist"></ol>
+            <input type="text" id="userName" value="operator" title="you - edit your name" minlength="1" maxlength="15" required />
+            <ol id="userList"></ol>
         </div>
     </div>
 
@@ -62,7 +66,7 @@
 <script type="module">
     window.cfg = {
         wsURL: 'ws://localhost:8080/ws',
-        editId: '[[${document.id}]]', // thymeleaf magic
+        documentId: '[[${document.id}]]', // thymeleaf magic
         defaultMode: 'text/x-java',
         saveWait: '10'
     };

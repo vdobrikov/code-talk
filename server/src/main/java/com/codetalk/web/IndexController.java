@@ -1,5 +1,6 @@
 package com.codetalk.web;
 
+import com.codetalk.config.DocumentConfig;
 import com.codetalk.model.Document;
 import com.codetalk.service.DocumentService;
 import org.springframework.stereotype.Controller;
@@ -11,9 +12,11 @@ import reactor.core.publisher.Mono;
 @Controller
 public class IndexController {
     private final DocumentService documentService;
+    private final DocumentConfig documentConfig;
 
-    public IndexController(DocumentService documentService) {
+    public IndexController(DocumentService documentService, DocumentConfig documentConfig) {
         this.documentService = documentService;
+        this.documentConfig = documentConfig;
     }
 
     @GetMapping("/")
@@ -23,7 +26,7 @@ public class IndexController {
 
     @GetMapping("/new")
     public String newDocument() {
-        return documentService.create(new Document("Untitled", "JAVA", "// Lets code"))
+        return documentService.create(new Document("Untitled", "JAVA", "\n".repeat(documentConfig.getInitialLinesNumber())))
                 .map(Document::getId)
                 .map(id -> "redirect:/" + id)
                 .block();

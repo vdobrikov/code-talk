@@ -2,12 +2,12 @@ import * as editor from './editor.js';
 import * as ws from './wsclient.js';
 
 // register this user
-ws.send('connect', { editId: cfg.editId, operator: editor.getOption('operator') });
+ws.send('connect', { documentId: cfg.documentId, userName: editor.getOption('userName') });
 
 
 // register all users
 window.addEventListener('ws:register', e => {
-    editor.setOperators(e.detail.userId, e.detail.user);
+    editor.setUsers(e.detail.userId, e.detail.user);
 });
 
 
@@ -48,7 +48,7 @@ function editCode(e) {
 
     // send all content
     function saveAll() {
-        ws.send('code', editor.get());
+        ws.send('content', editor.get());
     }
 
 }
@@ -59,10 +59,9 @@ window.addEventListener('cm:title', editOption);
 window.addEventListener('ws:title', editOption);
 window.addEventListener('cm:mode', editOption);
 window.addEventListener('ws:mode', editOption);
-window.addEventListener('cm:operator', editOption);
+window.addEventListener('cm:userName', editOption);
 
 function editOption(e) {
-
     let
         type = e.type,
         from = type.slice(0, 2),
@@ -75,6 +74,6 @@ function editOption(e) {
 
 
 // add, remove, or rename user
-window.addEventListener('ws:operator', e => {
-    editor.addOperator(e.detail.userId, e.detail.operator);
+window.addEventListener('ws:userName', e => {
+    editor.addUser(e.detail.userId, e.detail.operator);
 });
