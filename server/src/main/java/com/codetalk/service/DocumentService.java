@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
+
 @Service
 public class DocumentService {
     private final DocumentRepository documentRepository;
@@ -20,6 +22,10 @@ public class DocumentService {
 
     public Mono<Document> findById(String id) {
         return documentRepository.findById(id);
+    }
+
+    public Flux<Document> findByCreatedDateBefore(Instant date) {
+        return documentRepository.findByCreatedDateBefore(date);
     }
 
     public Mono<Document> create(Document document) {
@@ -43,5 +49,9 @@ public class DocumentService {
                     documentRepository.deleteById(id);
                     return existing;
                 });
+    }
+
+    public Mono<Void> deleteAll(Flux<Document> documents) {
+        return documentRepository.deleteAll(documents);
     }
 }

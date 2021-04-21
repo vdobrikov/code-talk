@@ -36,7 +36,11 @@ public class ClientPool {
         logSize();
     }
 
+    public int getSize() {
+        return sessionsToClients.size();
+    }
+
     private void logSize() {
-        LOG.debug("clients.size={}", sessionsToClients.size());
+        LOG.debug("clients.size={}", getSize());
     }
 }

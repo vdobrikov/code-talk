@@ -1,12 +1,9 @@
 package com.codetalk.web.websocket;
 
 import com.codetalk.service.DocumentService;
-import com.codetalk.web.websocket.model.ConnectMessage;
-import com.codetalk.web.websocket.model.ContentMessage;
-import com.codetalk.web.websocket.model.EditMessage;
+import com.codetalk.web.websocket.handler.MessageHandler;
 import com.codetalk.web.websocket.model.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,20 +17,21 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
 
 @Component
 public class DefaultWebSocketHandler implements WebSocketHandler {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultWebSocketHandler.class);
     private static final String PARAM_DOCUMENTID = "documentId";
 
-    private final DocumentService documentService;
     private final ClientPool clientPool;
+    private final List<MessageHandler> messageHandlers;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public DefaultWebSocketHandler(DocumentService documentService, ClientPool clientPool) {
-        this.documentService = documentService;
+    public DefaultWebSocketHandler(ClientPool clientPool, List<MessageHandler> messageHandlers) {
         this.clientPool = clientPool;
+        this.messageHandlers = messageHandlers;
     }
 
     @Override
@@ -61,50 +59,15 @@ public class DefaultWebSocketHandler implements WebSocketHandler {
     }
 
     private Mono<Void> handleMessage(Message<?> message, WebSocketSession session) {
-        Object data = message.getData();
-        switch (message.getType()) {
-            case ContentMessage.TYPE:
-                // Save changes into document
-                if (data instanceof String) {
-                    return clientPool.getBySessionId(session.getId())
-                            .map(DocumentClient::getDocumentId)
-                            .flatMap(documentService::findById)
-                            .doOnNext(document -> document.setContent((String) data))
-                            .flatMap(documentService::update)
-                            .then();
-                }
-                break;
-            case EditMessage.TYPE:
-                // Broadcast document changes
-                if (data instanceof JsonNode) {
-                    return clientPool.getBySessionId(session.getId())
-                            .map(DocumentClient::getDocumentId)
-                            .flatMapMany(clientPool::getByDocumentId)
-                            .filter(client -> !client.getSessionId().equals(session.getId()))
-                            .doOnNext(client -> client.sendData(messageToString(message)))
-                            .then();
-                }
-            case ConnectMessage.TYPE:
-                break;
-            default:
-                LOG.warn("Unknown message: message={}", message);
-                break;
-        }
-        return Mono.empty();
+        return messageHandlers.stream()
+                .filter(handler -> handler.getMessageType().equals(message.getType()))
+                .map(handler -> handler.handleMessage(message, session.getId()))
+                .reduce(Mono.empty(), Mono::then);
     }
 
     private void registerConnection(WebSocketSession session, FluxSink<WebSocketMessage> sink, String documentId) {
         LOG.info("Register connection: session.id={}", session.getId());
         clientPool.add(new DocumentClient(sink, session, documentId));
-    }
-
-    private String messageToString(Message<?> message) {
-        try {
-            return objectMapper.writeValueAsString(message);
-        } catch (JsonProcessingException e) {
-            LOG.error("Failed to serialize message: message={}", message, e);
-            throw new RuntimeException(e);
-        }
     }
 
     private Mono<Message<?>> stringToMessage(String str) {
