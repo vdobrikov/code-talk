@@ -11,7 +11,7 @@ public class DocumentConfig {
     /**
      * Number of lines in new document
      */
-    private int initialLinesNumber = 30;
+    private int initialLinesNumber = 1;
 
     /**
      * Max document time to live before cleanup
