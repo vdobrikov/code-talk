@@ -1,16 +1,15 @@
 package com.codetalk.web;
 
-import com.codetalk.WebSecurityConfig;
 import com.codetalk.model.Document;
-import com.codetalk.repository.DocumentRepository;
 import com.codetalk.service.DocumentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -23,8 +22,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
 @ExtendWith(SpringExtension.class)
-@WebFluxTest(controllers = DocumentController.class)
-@Import(WebSecurityConfig.class)
+@WebFluxTest(DocumentController.class)
+@ImportAutoConfiguration(exclude = {ReactiveSecurityAutoConfiguration.class})
 public class DocumentControllerTest {
     private static final String ID = "some-id";
     private static final String TITLE = "some-title";
@@ -36,9 +35,6 @@ public class DocumentControllerTest {
 
     @MockBean
     private DocumentService documentService;
-
-    @MockBean
-    private DocumentRepository documentRepository;
 
     private Document document;
 
@@ -59,7 +55,7 @@ public class DocumentControllerTest {
                 .expectBody()
                 .jsonPath("$[0].title").isEqualTo(TITLE)
                 .jsonPath("$[0].syntax").isEqualTo(MODE)
-                .jsonPath("$[0].code").isEqualTo(CODE);
+                .jsonPath("$[0].content").isEqualTo(CODE);
     }
 
     @Test
@@ -73,7 +69,7 @@ public class DocumentControllerTest {
                 .expectBody()
                 .jsonPath("$.title").isEqualTo(TITLE)
                 .jsonPath("$.syntax").isEqualTo(MODE)
-                .jsonPath("$.code").isEqualTo(CODE);
+                .jsonPath("$.content").isEqualTo(CODE);
     }
 
     @Test
@@ -99,7 +95,7 @@ public class DocumentControllerTest {
                 .expectBody()
                 .jsonPath("$.title").isEqualTo(TITLE)
                 .jsonPath("$.syntax").isEqualTo(MODE)
-                .jsonPath("$.code").isEqualTo(CODE);
+                .jsonPath("$.content").isEqualTo(CODE);
     }
 
     @Test
@@ -115,7 +111,7 @@ public class DocumentControllerTest {
                 .expectBody()
                 .jsonPath("$.title").isEqualTo(TITLE)
                 .jsonPath("$.syntax").isEqualTo(MODE)
-                .jsonPath("$.code").isEqualTo(CODE);
+                .jsonPath("$.content").isEqualTo(CODE);
     }
 
     @Test
@@ -149,5 +145,4 @@ public class DocumentControllerTest {
                 .exchange()
                 .expectStatus().isNotFound();
     }
-
 }

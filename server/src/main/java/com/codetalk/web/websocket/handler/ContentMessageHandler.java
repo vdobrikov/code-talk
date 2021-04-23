@@ -41,6 +41,5 @@ public class ContentMessageHandler implements MessageHandler {
                 .doOnNext(document -> document.setContent((String) data))
                 .flatMap(documentService::update)
                 .then();
-
     }
 }
