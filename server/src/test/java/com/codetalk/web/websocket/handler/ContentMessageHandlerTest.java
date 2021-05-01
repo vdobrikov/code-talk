@@ -17,6 +17,7 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,12 +57,14 @@ class ContentMessageHandlerTest {
         when(clientPool.getBySessionId(SESSION_ID)).thenReturn(Mono.just(documentClient));
         when(documentService.findById(DOCUMENT_ID)).thenReturn(Mono.just(document));
         when(documentService.update(document)).thenReturn(Mono.just(document));
+        when(clientPool.broadcast(message, SESSION_ID)).thenReturn(Mono.empty());
 
         Mono<Void> mono = sut.handleMessage(message, SESSION_ID);
 
         StepVerifier.create(mono)
                 .verifyComplete();
         assertThat(document.getContent()).isEqualTo(CONTENT);
+        verify(clientPool, times(1)).broadcast(message, SESSION_ID);
     }
 
     @Test
@@ -91,6 +94,7 @@ class ContentMessageHandlerTest {
         when(documentClient.getSessionId()).thenReturn(SESSION_ID);
         when(documentClient.getDocumentId()).thenReturn(DOCUMENT_ID);
         when(clientPool.getBySessionId(SESSION_ID)).thenReturn(Mono.empty());
+        when(clientPool.broadcast(message, SESSION_ID)).thenReturn(Mono.empty());
 
         Mono<Void> mono = sut.handleMessage(message, SESSION_ID);
 

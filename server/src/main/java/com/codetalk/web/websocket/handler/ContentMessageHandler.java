@@ -40,6 +40,6 @@ public class ContentMessageHandler implements MessageHandler {
                 .flatMap(documentService::findById)
                 .doOnNext(document -> document.setContent((String) data))
                 .flatMap(documentService::update)
-                .then();
+                .then(clientPool.broadcast(message, sessionId));
     }
 }
