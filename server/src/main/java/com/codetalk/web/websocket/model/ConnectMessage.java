@@ -7,4 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class ConnectMessage extends Message<ConnectionDetails> {
     @JsonIgnore
     public static final String TYPE = "connect";
+
+    public ConnectMessage() {
+    }
+
+    public ConnectMessage(ConnectionDetails data) {
+        super(TYPE, data);
+    }
 }

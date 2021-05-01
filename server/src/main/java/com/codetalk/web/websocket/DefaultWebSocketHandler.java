@@ -1,6 +1,5 @@
 package com.codetalk.web.websocket;
 
-import com.codetalk.service.DocumentService;
 import com.codetalk.web.websocket.handler.MessageHandler;
 import com.codetalk.web.websocket.model.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,6 +48,7 @@ public class DefaultWebSocketHandler implements WebSocketHandler {
                 .map(WebSocketMessage::getPayloadAsText)
                 .doOnNext(LOG::debug)
                 .flatMap(this::stringToMessage)
+                .flatMap(message -> preHandleMessage(message, session))
                 .flatMap(message -> handleMessage(message, session))
                 .doOnComplete(() -> clientPool.remove(session.getId()))
                 .doOnCancel(() -> clientPool.remove(session.getId()))
@@ -56,6 +56,11 @@ public class DefaultWebSocketHandler implements WebSocketHandler {
                 .then();
 
         return Mono.zip(input, output).then();
+    }
+
+    private Mono<Message<?>> preHandleMessage(Message<?> message, WebSocketSession session) {
+        // Add userId (sessionId) to message
+        return Mono.just(new Message<>(message.getType(), session.getId(), message.getData()));
     }
 
     private Mono<Void> handleMessage(Message<?> message, WebSocketSession session) {

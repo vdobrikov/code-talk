@@ -5,6 +5,7 @@ import com.codetalk.service.DocumentService;
 import com.codetalk.web.websocket.ClientPool;
 import com.codetalk.web.websocket.DocumentClient;
 import com.codetalk.web.websocket.model.ContentMessage;
+import com.codetalk.web.websocket.model.UserNameMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,9 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -62,21 +66,23 @@ class ContentMessageHandlerTest {
 
     @Test
     void testHandleWrongMessageType() {
-        message.setType("wrong-type");
-        Mono<Void> mono = sut.handleMessage(message, SESSION_ID);
+        UserNameMessage messageWithWrongType = new UserNameMessage("some-user");
+        Mono<Void> mono = sut.handleMessage(messageWithWrongType, SESSION_ID);
 
         StepVerifier.create(mono)
                 .verifyComplete();
+        verify(clientPool, never()).broadcast(any(), any());
         assertThat(document.getContent()).isEqualTo("");
     }
 
     @Test
     void testHandleWrongMessageDataType() {
-        message.setData(null);
-        Mono<Void> mono = sut.handleMessage(message, SESSION_ID);
+        ContentMessage messageWithWrongDataType = new ContentMessage(null);
+        Mono<Void> mono = sut.handleMessage(messageWithWrongDataType, SESSION_ID);
 
         StepVerifier.create(mono)
                 .verifyComplete();
+        verify(clientPool, never()).broadcast(any(), any());
         assertThat(document.getContent()).isEqualTo("");
     }
 

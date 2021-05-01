@@ -16,15 +16,7 @@ public class ConnectionDetails {
         return documentId;
     }
 
-    public void setDocumentId(String documentId) {
-        this.documentId = documentId;
-    }
-
     public String getUserName() {
         return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
     }
 }

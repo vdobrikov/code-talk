@@ -44,11 +44,15 @@ function receive(msg) {
         return;
     }
     let type = message.type;
+    let userId = message.userId;
     let data = message.data;
 
     if (type && data) {
         // raise custom event
-        let event = new CustomEvent(`ws:${type}`, { detail: data || {} });
+        let event = new CustomEvent(`ws:${type}`, { detail: {
+            userId: userId,
+            data: data
+        } || {} });
         window.dispatchEvent(event);
     }
 }

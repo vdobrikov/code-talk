@@ -1,5 +1,8 @@
 package com.codetalk.web.websocket;
 
+import com.codetalk.web.websocket.model.Message;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.reactive.socket.WebSocketMessage;
@@ -11,11 +14,17 @@ import java.util.Objects;
 public class DocumentClient {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentClient.class);
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final FluxSink<WebSocketMessage> sink;
     private final WebSocketSession session;
     private final String documentId;
+    private String userId;
 
     public DocumentClient(FluxSink<WebSocketMessage> sink, WebSocketSession session, String documentId) {
+        this(sink, session, documentId, null);
+    }
+
+    public DocumentClient(FluxSink<WebSocketMessage> sink, WebSocketSession session, String documentId, String userId) {
         Objects.requireNonNull(sink, "'sink' cannot be null");
         Objects.requireNonNull(session, "'session' cannot be null");
         Objects.requireNonNull(documentId, "'documentId' cannot be null");
@@ -23,6 +32,7 @@ public class DocumentClient {
         this.sink = sink;
         this.session = session;
         this.documentId = documentId;
+        this.userId = userId;
     }
 
     public String getDocumentId() {
@@ -33,9 +43,22 @@ public class DocumentClient {
         return session.getId();
     }
 
-    public void sendData(String data) {
-        LOG.debug("Send data: sessionId={}; data={}", getSessionId(), data);
-        sink.next(session.textMessage(data));
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void sendData(Message<?> message) {
+        LOG.debug("Send message: sessionId={}; message={}", getSessionId(), message);
+        try {
+            String text = objectMapper.writeValueAsString(message);
+            sink.next(session.textMessage(text));
+        } catch (JsonProcessingException e) {
+            throw new SendMessageException(e);
+        }
     }
 
     @Override
@@ -58,6 +81,7 @@ public class DocumentClient {
         return "DocumentClient{" +
                 "sessionId=" + session.getId() +
                 ", documentId='" + documentId + '\'' +
+                ", userName='" + userId + '\'' +
                 '}';
     }
 }

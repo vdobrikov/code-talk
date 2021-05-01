@@ -36,12 +36,12 @@ function editCode(e) {
 
         // incoming edit
         case 'ws:edit':
-            editor.edit(e.detail);
+            editor.edit(e.detail.data);
             break;
 
         // incoming saved content
         case 'cm:code':
-            editor.set(e.detail);
+            editor.set(e.detail.data);
             break;
 
     }
@@ -75,5 +75,5 @@ function editOption(e) {
 
 // add, remove, or rename user
 window.addEventListener('ws:userName', e => {
-    editor.addUser(e.detail.userId, e.detail.operator);
+    editor.addUser(e.detail.userId, e.detail.data);
 });

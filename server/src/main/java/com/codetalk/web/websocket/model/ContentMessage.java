@@ -11,10 +11,6 @@ public class ContentMessage extends Message<String> {
     public ContentMessage() {
     }
 
-    public ContentMessage(String type, String data) {
-        super(type, data);
-    }
-
     public ContentMessage(String data) {
         super(TYPE, data);
     }

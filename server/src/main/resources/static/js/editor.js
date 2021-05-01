@@ -4,6 +4,9 @@ const cm = CodeMirror(document.getElementById('editor'), {
         value: document.getElementById('code').textContent,
         mode: cfg.defaultMode,
         tabSize: 2,
+        theme: 'darcula',
+        styleActiveLine: true,
+        matchBrackets: true,
         lineNumbers: true
     });
 

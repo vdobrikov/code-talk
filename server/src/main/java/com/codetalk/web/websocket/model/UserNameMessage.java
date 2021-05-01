@@ -7,4 +7,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class UserNameMessage extends Message<String> {
     @JsonIgnore
     public static final String TYPE = "userName";
+
+    public UserNameMessage() {
+    }
+
+    public UserNameMessage(String data) {
+        super(TYPE, data);
+    }
 }

@@ -10,10 +10,6 @@ public class EditMessage extends Message<JsonNode> {
     public EditMessage() {
     }
 
-    public EditMessage(String type, JsonNode data) {
-        super(type, data);
-    }
-
     public EditMessage(JsonNode data) {
         super(TYPE, data);
     }
